@@ -1,0 +1,47 @@
+name: trawly-publish-smoke
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  packed-npm-consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run smoke
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trawly-packed-smoke-artifacts
+          path: artifacts/
+
+  composite-action-consumer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: shivaylamba/trawly@codex/roadmap-features-pr
+        with:
+          path: fixtures
+          fail-on: none
+          upload-sarif: "true"
+          sarif-output: action-trawly.sarif
+          markdown-output: action-trawly.md
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trawly-action-smoke-artifacts
+          path: |
+            action-trawly.sarif
+            action-trawly.md
