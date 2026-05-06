@@ -6,6 +6,14 @@ function assert(condition, message) {
 
 statSync("node_modules/.bin/trawly");
 
+const installedPackage = JSON.parse(
+  readFileSync("node_modules/trawly/package.json", "utf8"),
+);
+assert(installedPackage.version === "0.1.0", "expected trawly@0.1.0");
+
+const cliVersion = readFileSync("artifacts/version.txt", "utf8").trim();
+assert(cliVersion === "0.1.0", "expected installed CLI version 0.1.0");
+
 const { parseLockfile } = await import("trawly");
 const packages = parseLockfile("fixtures/package-lock.json");
 assert(packages[0]?.name === "lodash", "expected library export to parse lodash");
@@ -36,6 +44,8 @@ assert(
 );
 
 const npxJson = JSON.parse(readFileSync("artifacts/npx-tarball.json", "utf8"));
+const npxVersion = readFileSync("artifacts/npx-version.txt", "utf8").trim();
+assert(npxVersion === "0.1.0", "expected npm exec tarball CLI version 0.1.0");
 assert(
   npxJson.findings.some((finding) => finding.packageName === "lodash"),
   "expected npm exec tarball run to report lodash",
@@ -47,6 +57,10 @@ assert(
 
 const sarif = JSON.parse(readFileSync("artifacts/trawly.sarif", "utf8"));
 assert(sarif.version === "2.1.0", "expected SARIF v2.1.0");
+assert(
+  sarif.runs?.[0]?.tool?.driver?.semanticVersion === "0.1.0",
+  "expected SARIF semanticVersion to match package version",
+);
 assert(
   sarif.runs?.[0]?.results?.some((result) =>
     String(result.message?.text ?? "").includes("lodash"),
