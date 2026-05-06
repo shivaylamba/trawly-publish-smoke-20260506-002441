@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "smoke:cli": "mkdir -p artifacts && trawly inspect --lockfile fixtures/package-lock.json --format json --output artifacts/trawly.json --no-risk && trawly scan --lockfile fixtures/package-lock.json --format sarif --output artifacts/trawly.sarif --fail-on none --no-risk && trawly inspect --lockfile fixtures/package-lock.json --format markdown --output artifacts/trawly.md --no-risk",
-    "smoke:npx": "mkdir -p artifacts && npm exec --yes --package ./vendor/trawly-0.0.1.tgz -- trawly inspect --lockfile fixtures/package-lock.json --format json --output artifacts/npx-tarball.json --no-risk",
+    "smoke:cli": "mkdir -p artifacts && trawly inspect fixtures --lockfile package-lock.json --env --format json --output ../artifacts/trawly.json --no-risk && trawly scan fixtures --lockfile package-lock.json --env --format sarif --output ../artifacts/trawly.sarif --fail-on none --no-risk && trawly inspect fixtures --lockfile package-lock.json --env --format markdown --output ../artifacts/trawly.md --no-risk",
+    "smoke:npx": "mkdir -p artifacts && npm exec --yes --package ./vendor/trawly-0.0.1.tgz -- trawly inspect fixtures --lockfile package-lock.json --env --format json --output ../artifacts/npx-tarball.json --no-risk",
     "smoke:assert": "node scripts/assert-smoke.mjs",
     "smoke": "npm run smoke:cli && npm run smoke:npx && npm run smoke:assert"
   },
